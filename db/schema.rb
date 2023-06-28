@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_14_141929) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_27_210614) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -18,15 +18,60 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_14_141929) do
     t.datetime "start"
     t.datetime "finish"
     t.bigint "user_id", null: false
-    t.bigint "service_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["service_id"], name: "index_appointments_on_service_id"
     t.index ["user_id"], name: "index_appointments_on_user_id"
+  end
+
+  create_table "appointments_services", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "service_id", null: false
+    t.bigint "appointment_id", null: false
+    t.index ["appointment_id"], name: "index_appointments_services_on_appointment_id"
+    t.index ["service_id"], name: "index_appointments_services_on_service_id"
+  end
+
+  create_table "clients", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_clients_on_user_id"
   end
 
   create_table "departments", force: :cascade do |t|
     t.string "specialty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "employees", force: :cascade do |t|
+    t.bigint "level_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "role_id", null: false
+    t.index ["level_id"], name: "index_employees_on_level_id"
+    t.index ["role_id"], name: "index_employees_on_role_id"
+    t.index ["user_id"], name: "index_employees_on_user_id"
+  end
+
+  create_table "levels", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer "amount"
+    t.bigint "appointments_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appointments_id"], name: "index_payments_on_appointments_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -37,16 +82,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_14_141929) do
     t.integer "timing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "price"
+    t.bigint "employee_id", null: false
     t.index ["department_id"], name: "index_services_on_department_id"
-  end
-
-  create_table "user_departments", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "department_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["department_id"], name: "index_user_departments_on_department_id"
-    t.index ["user_id"], name: "index_user_departments_on_user_id"
+    t.index ["employee_id"], name: "index_services_on_employee_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -57,13 +96,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_14_141929) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
+    t.string "surname"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "appointments", "services"
   add_foreign_key "appointments", "users"
+  add_foreign_key "appointments_services", "appointments"
+  add_foreign_key "appointments_services", "services"
+  add_foreign_key "clients", "users"
+  add_foreign_key "employees", "levels"
+  add_foreign_key "employees", "roles"
+  add_foreign_key "employees", "users"
+  add_foreign_key "payments", "appointments", column: "appointments_id"
   add_foreign_key "services", "departments"
-  add_foreign_key "user_departments", "departments"
-  add_foreign_key "user_departments", "users"
+  add_foreign_key "services", "employees"
 end

@@ -1,0 +1,5 @@
+<ul>
+<% @services.each do |service| %>
+  <li><%= "#{service.name} (#{service.timing}minutes) £#{service.price}"%> <button>Add service </button> </li>
+<% end %>
+</ul>

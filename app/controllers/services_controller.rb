@@ -1,13 +1,19 @@
 class ServicesController < ApplicationController
   def index
+    @services = Service.all
   end
 
-  def create
-  end
+  # def new
+  #   @service = Service.new
+  # end
 
-  def update
-  end
+  # def create
+  #   @service = Service.new
+  # end
 
-  def destroy
-  end
+  # def update
+  # end
+
+  # def destroy
+  # end
 end
