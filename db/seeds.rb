@@ -16,15 +16,15 @@ require 'faker'
 puts "Cleaning database...."
 Service.destroy_all
 Employee.destroy_all
-
 Department.destroy_all
+Level.destroy_all
 User.destroy_all
 Appointment.destroy_all
 Role.destroy_all
 # AppointmentsService.destroy_all
 # Client.destroy_all
 
-# Level.destroy_all
+
 # Payment.destroy_all
 
 puts "Creating departments"

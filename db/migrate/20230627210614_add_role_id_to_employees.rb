@@ -1,5 +1,7 @@
 class AddRoleIdToEmployees < ActiveRecord::Migration[7.0]
   def change
-    add_reference :employees, :role, null: false, foreign_key: true
+
+    # change for false later
+    add_reference :employees, :role, null: true, foreign_key: true
   end
 end

@@ -10,17 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_27_210614) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_28_151149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "appointments", force: :cascade do |t|
     t.datetime "start"
     t.datetime "finish"
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_appointments_on_user_id"
+    t.bigint "client_id", null: false
+    t.bigint "payment_id", null: false
+    t.index ["client_id"], name: "index_appointments_on_client_id"
+    t.index ["payment_id"], name: "index_appointments_on_payment_id"
+  end
+
+  create_table "appointments_employees", id: false, force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "appointment_id", null: false
   end
 
   create_table "appointments_services", force: :cascade do |t|
@@ -50,10 +57,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_210614) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "role_id", null: false
     t.index ["level_id"], name: "index_employees_on_level_id"
-    t.index ["role_id"], name: "index_employees_on_role_id"
     t.index ["user_id"], name: "index_employees_on_user_id"
+  end
+
+  create_table "employees_roles", id: false, force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "role_id", null: false
   end
 
   create_table "levels", force: :cascade do |t|
@@ -62,12 +72,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_210614) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "levels_services", id: false, force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.bigint "level_id", null: false
+  end
+
   create_table "payments", force: :cascade do |t|
     t.integer "amount"
-    t.bigint "appointments_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["appointments_id"], name: "index_payments_on_appointments_id"
   end
 
   create_table "roles", force: :cascade do |t|
@@ -102,14 +115,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_210614) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "appointments", "users"
+  add_foreign_key "appointments", "clients"
+  add_foreign_key "appointments", "payments"
   add_foreign_key "appointments_services", "appointments"
   add_foreign_key "appointments_services", "services"
   add_foreign_key "clients", "users"
   add_foreign_key "employees", "levels"
-  add_foreign_key "employees", "roles"
   add_foreign_key "employees", "users"
-  add_foreign_key "payments", "appointments", column: "appointments_id"
   add_foreign_key "services", "departments"
   add_foreign_key "services", "employees"
 end

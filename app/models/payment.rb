@@ -1,3 +1,3 @@
 class Payment < ApplicationRecord
-  belongs_to :appointments
+  has_many :appointments, dependent: :destroy
 end
